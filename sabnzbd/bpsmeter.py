@@ -99,6 +99,8 @@ class BPSMeter:
         "bps",
         "bps_list",
         "server_bps",
+        "nzo_cached_amount",
+        "nzo_bps",
         "cached_amount",
         "sum_cached_amount",
         "day_total",
@@ -135,6 +137,8 @@ class BPSMeter:
         self.bps_list: list[int] = []
 
         self.server_bps: dict[str, float] = {}
+        self.nzo_cached_amount: dict[str, int] = {}
+        self.nzo_bps: dict[str, float] = {}
         self.cached_amount: dict[str, int] = {}
         self.sum_cached_amount: int = 0
         self.day_total: dict[str, int] = {}
@@ -269,6 +273,11 @@ class BPSMeter:
             self.article_stats_tried[server][self.day_label] = 0
             self.article_stats_failed[server][self.day_label] = 0
 
+    def update_nzo(self, nzo_id: str, amount: int):
+        """Track bytes received for a single queue job (parallel to server totals)."""
+        if nzo_id and amount:
+            self.nzo_cached_amount[nzo_id] = self.nzo_cached_amount.get(nzo_id, 0) + amount
+
     def update(self, server: Optional[str] = None, amount: int = 0):
         """Update counters for "server" with "amount" bytes"""
         # Add amount to temporary storage
@@ -330,6 +339,14 @@ class BPSMeter:
             # Update server bps
             server_bps[srv] = (server_bps[srv] * dt_last + cached) / dt_total
 
+        nzo_cached_amount = self.nzo_cached_amount
+        nzo_bps = self.nzo_bps
+        for nzo_id in list(nzo_cached_amount.keys()):
+            cached = nzo_cached_amount[nzo_id]
+            if cached:
+                nzo_cached_amount[nzo_id] = 0
+            nzo_bps[nzo_id] = (nzo_bps.get(nzo_id, 0.0) * dt_last + cached) / dt_total
+
         # Quota check
         total_cached = self.sum_cached_amount
         if self.have_quota and self.quota_enabled:
@@ -377,6 +394,8 @@ class BPSMeter:
         self.bps = 0.0
         for server in self.server_bps:
             self.server_bps[server] = 0.0
+        self.nzo_bps.clear()
+        self.nzo_cached_amount.clear()
 
     def add_empty_time(self):
         # Extra zeros, but never more than the maximum!

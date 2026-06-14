@@ -1,77 +1,76 @@
-SABnzbd - The automated Usenet download tool
-============================================
+# sabnzbd-odin
 
-[![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![Join our Discord](https://img.shields.io/discord/976737547558461480?color=7289DA&label=Discord&logo=Discord&logoColor=white)](https://discord.sabnzbd.org)
+SABnzbd fork for use as a headless Usenet download worker with [Odin](https://github.com/combwizard/odin).
 
-SABnzbd is an Open Source Binary Newsreader written in Python.
+Upstream SABnzbd does not include these changes. Odin can still talk to stock SAB using queue-level speed, but **metadata passthrough**, **per-slot download speed**, and **completion webhooks** require this fork (or equivalent patches).
 
-It's totally free, easy to use, and works practically everywhere.
-SABnzbd makes Usenet as simple and streamlined as possible by automating everything we can. All you have to do is add an `.nzb`. SABnzbd takes over from there, where it will be automatically downloaded, verified, repaired, extracted and filed away with zero human interaction.
-SABnzbd offers an easy setup wizard and has self-analysis tools to verify your setup.
+Based on [sabnzbd/sabnzbd](https://github.com/sabnzbd/sabnzbd) (GPL v2). General SABnzbd documentation: [sabnzbd.org](https://sabnzbd.org).
 
-If you want to know more you can head over to our website: https://sabnzbd.org.
+## What this fork adds
 
-## Resolving Dependencies
+| Feature | Summary |
+|---------|---------|
+| **Metadata passthrough** | Odin passes `odin_download_id` and `odin_target_id` when adding NZBs; SAB stores them on the job and echoes them in queue/history API responses. |
+| **Per-slot `kbpersec`** | Each queue slot reports its own download speed (stock SAB only exposes total speed on the queue header). |
+| **Completion webhooks** | When post-processing finishes, SAB POSTs a terminal event to Odin so import can start immediately without polling. |
 
-SABnzbd has a few dependencies you'll need before you can get running. If you've previously run SABnzbd from one of the various Linux packages, then you likely already have all the needed dependencies. If not, here's what you're looking for:
+See [docs/ODIN.md](docs/ODIN.md) for API parameters, webhook payload, configuration, and code map.
 
-- `python` (Python 3.10 and above, often called `python3`)
-- Python modules listed in `requirements.txt`. Install with `python3 -m pip install -r requirements.txt -U`
-- `par2` (Multi-threaded par2 installation guide can be found [here](https://sabnzbd.org/wiki/installation/multicore-par2))
-- `unrar` (make sure you get the "official" non-free version of unrar)
+## Requirements
 
-Optional:
-- See `requirements.txt`
+- Python 3.10+
+- Dependencies in `requirements.txt` (`python3 -m pip install -r requirements.txt -U`)
+- System binaries: `par2`, `unrar` (see [upstream install guide](https://github.com/sabnzbd/sabnzbd/blob/master/INSTALL.txt))
 
-Your package manager should supply these. If not, we've got links in our [installation guide](https://github.com/sabnzbd/sabnzbd/blob/master/INSTALL.txt).
+## Quick start
 
-## Running SABnzbd from source
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt -r tests/requirements.txt
 
-Once you've sorted out all the dependencies, simply run:
+# Run (creates sabnzbd.ini in the default data dir on first start)
+.venv/bin/python -OO SABnzbd.py
 
-```
-python3 -OO SABnzbd.py
-```
-
-Or, if you want to run in the background:
-
-```
-python3 -OO SABnzbd.py -d -f /path/to/sabnzbd.ini
+# Or with an explicit config file
+.venv/bin/python -OO SABnzbd.py -f /path/to/sabnzbd.ini
 ```
 
-If you want multi-language support, run:
+Enable Odin webhooks in `sabnzbd.ini`:
 
+```ini
+[odin]
+odin_enable = 1
+odin_url = http://127.0.0.1:8688/api/v1/webhook/sabnzbd
+odin_api_key = your-odin-rest-api-key
 ```
-python3 tools/make_mo.py
+
+Add an NZB with Odin correlation IDs:
+
+```http
+GET /sabnzbd/api?mode=addurl&apikey=…&name=…&cat=odin
+    &odin_download_id=f47ac10b-58cc-4372-a567-0e02b2c3d479
+    &odin_target_id=6ba7b810-9dad-11d1-80b4-00c04fd430c8
 ```
 
-Our many other command line options are explained in depth [here](https://sabnzbd.org/wiki/advanced/command-line-parameters).
+Optional parameters on `addurl`, `addfile`, and `addlocalfile`.
 
-## About Our Repo
+## Testing
 
-The workflow we use, is a simplified form of "GitFlow".
-Basically:
-- `master` contains only stable releases (which have been merged to `master`) and is intended for end-users.
-- `develop` is the target for integration and is **not** intended for end-users.
-- `1.1.x` is a release and maintenance branch for 1.1.x (1.1.0 -> 1.1.1 -> 1.1.2) and is **not** intended for end-users.
-- `feature/my_feature` is a temporary feature branch based on `develop`.
-- `bugfix/my_bugfix` is an optional temporary branch for bugfix(es) based on `develop`.
+Unit tests for the Odin integration:
 
-Conditions:
-- Merging of a stable release into `master` will be simple: the release branch is always right.
-- `master` is not merged back to `develop`.
-- `develop` is not re-based on `master`.
-- Release branches branch from `develop` only.
-- Bugfixes created specifically for a release branch are done there (because they are specific, they're not cherry-picked to `develop`).
-- Bugfixes done on `develop` may be cherry-picked to a release branch.
-- We will not release a 1.0.2 if a 1.1.0 has already been released.
+```bash
+.venv/bin/python -m pytest tests/test_api_odin.py tests/test_odin_webhook.py tests/test_bpsmeter_nzo.py -q
+```
 
-## Privacy Policy
+Homelab validation scripts (require a running fork and, for E2E, a running Odin instance) live under `scripts/test-odin-*.sh`. See [docs/ODIN.md](docs/ODIN.md#homelab-scripts).
 
-This program will not transfer any information to other networked systems unless
-specifically requested by the user or the person installing or operating it.
+## Relationship to upstream
 
-## Code Signing Policy
+This repo tracks upstream SABnzbd on `develop` and layers Odin-specific changes on top. It is maintained for Odin integration, not as a general-purpose SABnzbd distribution.
 
-For our Windows release, free code signing is provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+- **Upstream:** https://github.com/sabnzbd/sabnzbd
+- **Odin consumer:** https://github.com/combwizard/odin — see `odin/.cursor/docs/SABNZBD-INTEGRATION.md` in that repo for the client side (status mirroring, speed resolution, webhook receiver).
+
+## License
+
+GPL v2 — same as upstream SABnzbd.

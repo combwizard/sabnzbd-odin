@@ -32,6 +32,9 @@ SABnzbd-*/
 
 # Testing folders
 tests/cache
+.dev/
+.venv/
+Downloads/
 
 # General junk
 *.keep

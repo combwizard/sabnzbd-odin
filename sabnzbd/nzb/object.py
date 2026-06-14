@@ -117,6 +117,9 @@ class NzoInfo(TypedDict, total=False):
     password: str
     # RSS feed source name
     RSS: str
+    # Odin media lifecycle manager correlation IDs (set via API at grab time)
+    odin_download_id: str
+    odin_target_id: str
     # Download duration in seconds (set on completion)
     download_time: int
     # Article quality counters (incremented during download)

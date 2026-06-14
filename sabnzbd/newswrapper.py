@@ -217,6 +217,7 @@ class NewsWrapper:
                 # Update statistics only when we fetched a whole article
                 # The side effect is that we don't count things like article-not-available messages
                 article.nzf.nzo.update_download_stats(sabnzbd.BPSMeter.bps, server.id, response.bytes_read)
+                sabnzbd.BPSMeter.update_nzo(str(article.nzf.nzo.nzo_id), response.bytes_read)
 
         # Response code depends on request command:
         # 220 = ARTICLE, 222 = BODY

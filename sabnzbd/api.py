@@ -88,7 +88,7 @@ from sabnzbd.encoding import xml_name, utob
 from sabnzbd.getipaddress import local_ipv4, public_ipv4, public_ipv6, dnslookup, active_socks5_proxy
 from sabnzbd.database import HistoryDB
 from sabnzbd.lang import is_rtl
-from sabnzbd.nzb import TryList, NzbObject
+from sabnzbd.nzb import TryList, NzbObject, NzoInfo
 from sabnzbd.newswrapper import NewsWrapper, NNTPPermanentError
 import sabnzbd.emailer
 import sabnzbd.sorting
@@ -310,6 +310,42 @@ def _api_translate(name: str, kwargs: ApiParams) -> bytes:
     return report(keyword="value", data=T(kwargs.get("value", "")))
 
 
+def _api_param_str(kwargs: ApiParams, key: str) -> str:
+    """Return a single trimmed string from an API parameter."""
+    value = kwargs.get(key)
+    if isinstance(value, list):
+        value = value[0] if value else ""
+    if value is None:
+        return ""
+    return str(value).strip()
+
+
+def _odin_info_from_kwargs(kwargs: ApiParams) -> NzoInfo:
+    """Extract optional Odin correlation IDs from API parameters."""
+    info: NzoInfo = {}
+    if download_id := _api_param_str(kwargs, "odin_download_id"):
+        info["odin_download_id"] = download_id
+    if target_id := _api_param_str(kwargs, "odin_target_id"):
+        info["odin_target_id"] = target_id
+    return info
+
+
+def _odin_slot_fields(nzo: NzbObject) -> dict[str, str]:
+    """Queue/history slot fields for Odin integration."""
+    return {
+        "odin_download_id": nzo.nzo_info.get("odin_download_id", ""),
+        "odin_target_id": nzo.nzo_info.get("odin_target_id", ""),
+    }
+
+
+def _slot_kbpersec(nzo: NzbObject, slot_status: str) -> str:
+    """Per-job download speed in KB/s for queue slots."""
+    if slot_status != Status.DOWNLOADING:
+        return "0.00"
+    bps = sabnzbd.BPSMeter.nzo_bps.get(str(nzo.nzo_id), 0.0)
+    return "%.2f" % (bps / KIBI)
+
+
 def _api_addfile(name: str, kwargs: ApiParams) -> bytes:
     """API: accepts name, pp, script, cat, priority, nzbname"""
     # Normal upload will send the nzb in a kw arg called name or nzbfile
@@ -325,6 +361,7 @@ def _api_addfile(name: str, kwargs: ApiParams) -> bytes:
             priority=kwargs.get("priority"),
             nzbname=kwargs.get("nzbname"),
             password=kwargs.get("password"),
+            nzo_info=_odin_info_from_kwargs(kwargs),
         )
         return report(keyword="", data={"status": res is AddNzbFileResult.OK, "nzo_ids": nzo_ids})
     else:
@@ -368,6 +405,7 @@ def _api_addlocalfile(name: str, kwargs: ApiParams) -> bytes:
                     keep=True,
                     nzbname=kwargs.get("nzbname"),
                     password=kwargs.get("password"),
+                    nzo_info=_odin_info_from_kwargs(kwargs),
                 )
                 return report(keyword="", data={"status": res is AddNzbFileResult.OK, "nzo_ids": nzo_ids})
             else:
@@ -646,7 +684,7 @@ def _api_move_nzf_bulk(name: str, kwargs: ApiParams) -> bytes:
 
 
 def _api_addurl(name: str, kwargs: ApiParams) -> bytes:
-    """API: accepts name, output, pp, script, cat, priority, nzbname"""
+    """API: accepts name, output, pp, script, cat, priority, nzbname, odin_download_id, odin_target_id"""
     pp = kwargs.get("pp")
     script = kwargs.get("script")
     cat = kwargs.get("cat")
@@ -656,7 +694,16 @@ def _api_addurl(name: str, kwargs: ApiParams) -> bytes:
 
     if name:
         # Reporting a list of NZO's, for compatibility with other add-methods
-        res, nzo_ids = sabnzbd.urlgrabber.add_url(name, pp, script, cat, priority, nzbname, password)
+        res, nzo_ids = sabnzbd.urlgrabber.add_url(
+            name,
+            pp,
+            script,
+            cat,
+            priority,
+            nzbname,
+            password,
+            nzo_info=_odin_info_from_kwargs(kwargs),
+        )
         return report(keyword="", data={"status": res is AddNzbFileResult.OK, "nzo_ids": nzo_ids})
     else:
         logging.info("API-call addurl: no URLs received")
@@ -1719,6 +1766,8 @@ def build_queue(
 
         # Add timestamp when the item was added to the queue
         slot["time_added"] = nzo.time_added
+        slot["kbpersec"] = _slot_kbpersec(nzo, slot["status"])
+        slot.update(_odin_slot_fields(nzo))
 
         slotinfo.append(slot)
         n += 1
@@ -2038,6 +2087,7 @@ def add_active_history(postproc_queue: list[NzbObject], items: list[dict[str, An
             "bytes": nzo.bytes_downloaded,
             "size": to_units(nzo.bytes_downloaded, "B"),
             "meta": None,
+            **_odin_slot_fields(nzo),
             "series": "",
             "duplicate_key": nzo.duplicate_key,
             "md5sum": "",

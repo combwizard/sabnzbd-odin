@@ -734,6 +734,11 @@ nscript_prio_error = OptionBool("nscript", "nscript_prio_error", False)
 nscript_prio_queue_done = OptionBool("nscript", "nscript_prio_queue_done", False)
 nscript_prio_other = OptionBool("nscript", "nscript_prio_other", True)
 
+# [odin]
+odin_enable = OptionBool("odin", "odin_enable", False)
+odin_url = OptionStr("odin", "odin_url")
+odin_api_key = OptionStr("odin", "odin_api_key")
+
 
 ##############################################################################
 # Set root folders for Folder config-items

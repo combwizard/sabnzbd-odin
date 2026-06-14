@@ -93,6 +93,7 @@ import sabnzbd.config as config
 import sabnzbd.cfg as cfg
 import sabnzbd.database as database
 import sabnzbd.notifier as notifier
+import sabnzbd.odin_webhook as odin_webhook
 import sabnzbd.utils.rarvolinfo as rarvolinfo
 import sabnzbd.utils.checkdir
 import sabnzbd.deobfuscate_filenames as deobfuscate
@@ -725,6 +726,8 @@ def process_job(nzo: NzbObject) -> bool:
         history_db.add_history_db(nzo, workdir_complete, postproc_time, script_log, script_line)
         # Purge items
         history_db.auto_history_purge()
+
+    odin_webhook.notify_terminal(nzo, workdir_complete)
 
     history_updated()
     return True

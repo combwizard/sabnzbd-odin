@@ -23,6 +23,7 @@ import os
 import time
 import uuid
 import zlib
+import json
 import logging
 import sys
 import threading
@@ -379,8 +380,8 @@ class HistoryDB:
         self.execute(
             """INSERT INTO history (completed, name, nzb_name, category, pp, script, report,
             url, status, nzo_id, storage, path, script_log, script_line, download_time, postproc_time, stage_log,
-            downloaded, fail_message, url_info, bytes, duplicate_key, md5sum, password, time_added)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            downloaded, fail_message, url_info, bytes, duplicate_key, md5sum, password, time_added, meta)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             t,
         )
         logging.info("Added job %s to history", nzo.final_name)
@@ -575,6 +576,36 @@ def convert_search(search: Optional[str]) -> str:
     return search
 
 
+def _odin_meta_json(nzo: "sabnzbd.nzb.NzbObject") -> str:
+    """Serialize Odin correlation IDs for history persistence."""
+    odin: dict[str, str] = {}
+    if download_id := nzo.nzo_info.get("odin_download_id"):
+        odin["odin_download_id"] = download_id
+    if target_id := nzo.nzo_info.get("odin_target_id"):
+        odin["odin_target_id"] = target_id
+    if not odin:
+        return ""
+    return json.dumps(odin)
+
+
+def _odin_fields_from_meta(meta: str | None) -> dict[str, str]:
+    """Restore Odin correlation IDs from persisted history meta."""
+    fields = {"odin_download_id": "", "odin_target_id": ""}
+    if not meta:
+        return fields
+    try:
+        data = json.loads(meta)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return fields
+    if not isinstance(data, dict):
+        return fields
+    if download_id := data.get("odin_download_id"):
+        fields["odin_download_id"] = str(download_id)
+    if target_id := data.get("odin_target_id"):
+        fields["odin_target_id"] = str(target_id)
+    return fields
+
+
 def build_history_info(
     nzo: "sabnzbd.nzb.NzbObject",
     workdir_complete: str,
@@ -633,6 +664,7 @@ def build_history_info(
         nzo.md5sum,
         nzo.correct_password,
         nzo.time_added,
+        _odin_meta_json(nzo),
     )
 
 
@@ -692,6 +724,9 @@ def unpack_history_info(item: sqlite3.Row) -> dict[str, Any]:
     item["retry"] = bool_conv(item["status"] == Status.FAILED and item["path"] and os.path.exists(item["path"]))
     if item["report"] == "future":
         item["retry"] = True
+
+    item.update(_odin_fields_from_meta(item.get("meta")))
+    item["meta"] = None
 
     return item
 

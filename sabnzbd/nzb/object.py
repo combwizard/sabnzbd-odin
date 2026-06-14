@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -OO
 # Copyright 2007-2026 by The SABnzbd-Team (sabnzbd.org)
+# Odin integration modifications Copyright (C) 2026 Combwizard
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

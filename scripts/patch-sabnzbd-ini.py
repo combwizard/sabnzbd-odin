@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026 Combwizard
+# Part of sabnzbd-odin; based on SABnzbd - Copyright 2007-2026 by The SABnzbd-Team (sabnzbd.org)
 """Patch sabnzbd.ini for host-run Odin fork (absolute paths, port, [odin])."""
 
 from __future__ import annotations

@@ -74,3 +74,9 @@ This repo tracks upstream SABnzbd on `develop` and layers Odin-specific changes 
 ## License
 
 GPL v2 — same as upstream SABnzbd.
+
+## Copyright
+
+SABnzbd is Copyright 2007-2026 by The SABnzbd-Team ([sabnzbd.org](https://sabnzbd.org)).
+
+Odin integration code in this fork is Copyright (C) 2026 Combwizard. Modified upstream files retain the SABnzbd-Team notice with an additional modification line; new files (e.g. `sabnzbd/odin_webhook.py`) are attributed to Combwizard and note their basis in SABnzbd.

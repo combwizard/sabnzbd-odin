@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -OO
-# Copyright 2007-2026 by The SABnzbd-Team (sabnzbd.org)
+# Copyright (C) 2026 Combwizard
+# Part of sabnzbd-odin; based on SABnzbd - Copyright 2007-2026 by The SABnzbd-Team (sabnzbd.org)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

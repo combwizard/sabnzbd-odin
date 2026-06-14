@@ -69,7 +69,8 @@ Homelab validation scripts (require a running fork and, for E2E, a running Odin 
 This repo tracks upstream SABnzbd on `develop` and layers Odin-specific changes on top. It is maintained for Odin integration, not as a general-purpose SABnzbd distribution.
 
 - **Upstream:** https://github.com/sabnzbd/sabnzbd
-- **Odin consumer:** sibling Odin repo — see `odin/.cursor/docs/SABNZBD-INTEGRATION.md` for the client side (status mirroring, speed resolution, webhook receiver).
+
+Odin uses this fork as its SABnzbd download client. See [docs/ODIN.md](docs/ODIN.md) for configuration and API details.
 
 ## License
 

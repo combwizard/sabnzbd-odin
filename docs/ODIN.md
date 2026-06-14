@@ -185,6 +185,6 @@ scripts/test-odin-integration-all.sh
 
 ---
 
-## Odin consumer
+## Odin client
 
-Client-side integration (SAB client, status mirroring, speed resolution, webhook handler) lives in the Odin repository.
+On the Odin side, the download client sends `odin_download_id` / `odin_target_id` at grab time, polls queue slots for per-job speed and status, and receives completion webhooks from this fork. Webhook handling and import are configured in Odin, not in SABnzbd.

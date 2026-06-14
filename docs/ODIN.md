@@ -1,6 +1,6 @@
 # Odin integration
 
-This fork adds features so [Odin](https://github.com/combwizard/odin) can use SABnzbd as a headless download worker with stable job correlation and richer queue telemetry.
+This fork adds features so Odin can use SABnzbd as a headless download worker with stable job correlation and richer queue telemetry.
 
 ## Status
 
@@ -187,4 +187,4 @@ scripts/test-odin-integration-all.sh
 
 ## Odin consumer
 
-Client-side integration (SAB client, status mirroring, speed resolution, webhook handler) lives in the [Odin](https://github.com/combwizard/odin) repository.
+Client-side integration (SAB client, status mirroring, speed resolution, webhook handler) lives in the Odin repository.

@@ -1,6 +1,6 @@
 # sabnzbd-odin
 
-SABnzbd fork for use as a headless Usenet download worker with [Odin](https://github.com/combwizard/odin).
+SABnzbd fork for use as a headless Usenet download worker with Odin.
 
 Upstream SABnzbd does not include these changes. Odin can still talk to stock SAB using queue-level speed, but **metadata passthrough**, **per-slot download speed**, and **completion webhooks** require this fork (or equivalent patches).
 
@@ -69,7 +69,7 @@ Homelab validation scripts (require a running fork and, for E2E, a running Odin 
 This repo tracks upstream SABnzbd on `develop` and layers Odin-specific changes on top. It is maintained for Odin integration, not as a general-purpose SABnzbd distribution.
 
 - **Upstream:** https://github.com/sabnzbd/sabnzbd
-- **Odin consumer:** https://github.com/combwizard/odin — see `odin/.cursor/docs/SABNZBD-INTEGRATION.md` in that repo for the client side (status mirroring, speed resolution, webhook receiver).
+- **Odin consumer:** sibling Odin repo — see `odin/.cursor/docs/SABNZBD-INTEGRATION.md` for the client side (status mirroring, speed resolution, webhook receiver).
 
 ## License
 

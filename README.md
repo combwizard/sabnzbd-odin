@@ -18,9 +18,11 @@ See [docs/ODIN.md](docs/ODIN.md) for API parameters, webhook payload, configurat
 
 ## Requirements
 
-- Python 3.10+
-- Dependencies in `requirements.txt` (`python3 -m pip install -r requirements.txt -U`)
-- System binaries: `par2`, `unrar` (see [upstream install guide](https://github.com/sabnzbd/sabnzbd/blob/master/INSTALL.txt))
+- Python 3.10+ (often `python3`)
+- Dependencies in `requirements.txt` (`python3 -m pip install -r requirements.txt`)
+- System binaries: `par2` ([multicore guide](https://sabnzbd.org/wiki/installation/multicore-par2)), `unrar` (official non-free version)
+
+Your package manager should supply the system binaries. If not, see the [upstream installation guide](https://sabnzbd.org/wiki/installation/install-off-modules).
 
 ## Quick start
 

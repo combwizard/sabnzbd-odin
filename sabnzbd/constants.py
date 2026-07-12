@@ -25,7 +25,6 @@ POSTPROC_QUEUE_VERSION = 3
 ONDISK_VERSION = 1
 
 REC_RAR_VERSION = 550
-RAR_MAX_PASSWORD = 127  #: Max number of utf-16 chars in passwords.
 
 ANFO = namedtuple("ANFO", "article_sum cache_size cache_limit")
 
@@ -54,7 +53,7 @@ ATTRIB_FILE = "SABnzbd_attrib"
 NZO_FILE = "SABnzbd_nzo_data"
 REPAIR_REQUEST = "repair-all.sab"
 
-SABCTOOLS_VERSION_REQUIRED = "9.5.0"
+SABCTOOLS_VERSION_REQUIRED = "9.6.1"
 
 DB_HISTORY_VERSION = 1
 DB_HISTORY_NAME = "history%s.db" % DB_HISTORY_VERSION

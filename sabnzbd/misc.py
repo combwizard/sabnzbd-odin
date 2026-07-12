@@ -39,9 +39,18 @@ import sabctools
 import socks
 import math
 import rarfile
+import hashlib
 from threading import Thread, RLock
 from collections.abc import Iterable
 from typing import Any, AnyStr, Optional, Collection
+from functools import lru_cache
+
+from hachoir.parser import createParser as hachoir_create_parser
+from hachoir.metadata import extractMetadata as hachoir_extract_metadata
+from hachoir.core.log import log as hachoir_log
+
+# Keep hachoir from printing parser warnings straight to the console
+hachoir_log.use_print = False
 
 import sabnzbd
 import sabnzbd.getipaddress
@@ -79,12 +88,17 @@ if sabnzbd.WINDOWS:
 if sabnzbd.MACOS:
     from sabnzbd.utils import sleepless
 
+
 TAB_UNITS = ("", "K", "M", "G", "T", "P")
 RE_UNITS = re.compile(r"(\d+\.*\d*)\s*([KMGTP]?)", re.I)
 RE_VERSION = re.compile(r"(\d+)\.(\d+)\.(\d+)([a-zA-Z]*)(\d*)")
-RE_SAMPLE = re.compile(r"((^|[\W_])(sample|proof))", re.I)  # something-sample or something-proof
 RE_IP4 = re.compile(r"inet\s+(addr:\s*)?(\d+\.\d+\.\d+\.\d+)")
 RE_IP6 = re.compile(r"inet6\s+(addr:\s*)?([0-9a-f:]+)", re.I)
+
+# Media shorter than this (in seconds) can be an actual sample; anything longer
+# is considered real content even when its name matches the sample pattern
+RE_SAMPLE = re.compile(r"((^|[\W_])(sample|proof))", re.I)  # something-sample or something-proof
+SAMPLE_MAX_DURATION = 2 * 60
 
 # Name patterns for NZB parsing
 RE_SUBJECT_FILENAME_QUOTES = re.compile(r'"([^"]*)"')
@@ -1073,9 +1087,42 @@ def get_all_passwords(nzo) -> list[str]:
     return unique_passwords
 
 
-def is_sample(filename: str) -> bool:
-    """Try to determine if filename is (most likely) a sample"""
-    return bool(re.search(RE_SAMPLE, filename))
+def is_sample(filename_or_filepath: str) -> bool:
+    """Try to determine if the file is (most likely) a sample.
+    When given a path to an actual file on disk, the media duration is used
+    to rule out false-positives on titles that merely contain "sample" or
+    "proof" (e.g. "The.Moment.of.Proof.S01E01")."""
+    if not re.search(RE_SAMPLE, os.path.basename(filename_or_filepath)):
+        return False
+
+    # Long media files are never a sample, no matter what its name suggests
+    if os.path.isfile(filename_or_filepath):
+        if duration := get_media_duration(filename_or_filepath):
+            logging.debug("Media duration of %s is %s seconds", filename_or_filepath, duration)
+            return duration <= SAMPLE_MAX_DURATION
+        logging.debug(
+            "Could not determine media duration of %s, using filename-based sample detection",
+            filename_or_filepath,
+        )
+    return True
+
+
+def get_media_duration(filepath: str) -> Optional[float]:
+    """Return the duration of a media file in seconds using the pure-Python
+    hachoir parser (no external tools required), or None when it cannot be
+    determined (not a media file, unreadable, or missing duration metadata)."""
+    if not os.path.isfile(filepath):
+        return None
+    try:
+        parser = hachoir_create_parser(filepath)
+        if not parser:
+            return None
+        with parser:
+            if duration := hachoir_extract_metadata(parser).get("duration", 0):
+                return duration.total_seconds()
+    except Exception:
+        logging.debug("Failed to read media duration of %s", filepath, exc_info=True)
+    return None
 
 
 def find_on_path(targets: str | tuple[str, ...]) -> Optional[str]:
@@ -1709,10 +1756,60 @@ class SABRarFile(rarfile.RarFile):
         """Return list of filenames in archive."""
         return [f.filename for f in self.infolist() if not f.isdir()]
 
-    def trigger_parse(self):
-        """Force re-parse, wich is needed to trigger password checking logic"""
-        self._parse()
+    def setpassword(self, pwd):
+        """Sets the password to use when extracting."""
+        self._file_parser = None  # Always trigger parse
+        super().setpassword(pwd)
+
+    def _parse(self):
+        """Run parser for file type"""
+        super()._parse()
+        self._verify_file_passwords()
+
+    def _verify_file_passwords(self):
+        """Verify passwords for all files in archive"""
+        if not self._password:
+            return
+        if isinstance(self._file_parser, rarfile.RAR5Parser):
+            # Encrypted headers already verify the password, and we assume all files use the same password
+            if self._file_parser.has_header_encryption():
+                return
+            for rar_obj in self.infolist():
+                if rar_obj.is_file() and rar_obj.needs_password():
+                    _algo, flags, kdf_count, salt, _iv, checkval = rar_obj.file_encryption
+                    if flags & rarfile.RAR5_XENC_CHECKVAL:
+                        if not rar5_check_password(self._password, salt, kdf_count, checkval):
+                            raise rarfile.RarWrongPassword()
+                        # All files typically share the same password and usually even the same salt, so one successful check is enough
+                        return
+
+
+@lru_cache(maxsize=128)
+def rar5_check_password(password: str | bytes, salt: bytes, kdf_count_shift: int, check_value: bytes) -> bool:
+    """Verify a check_value against a password, salt and kdf_count_shift"""
+    if len(check_value) != rarfile.RAR5_PW_CHECK_SIZE + rarfile.RAR5_PW_SUM_SIZE:
+        return False
+    if kdf_count_shift > rarfile.RAR_MAX_KDF_SHIFT:
+        raise rarfile.BadRarFile("Too large kdf_count")
+
+    hdr_check = check_value[: rarfile.RAR5_PW_CHECK_SIZE]
+    hdr_sum = check_value[rarfile.RAR5_PW_CHECK_SIZE :]
+    sum_hash = hashlib.sha256(hdr_check).digest()
+    if sum_hash[: rarfile.RAR5_PW_SUM_SIZE] != hdr_sum:
+        return False
+
+    kdf_count = (1 << kdf_count_shift) + 32
+    password_hash = rarfile.rar5_s2k(password, salt, kdf_count)
+
+    # Fold the 32-byte value into 8 bytes
+    pwd_check = bytearray(rarfile.RAR5_PW_CHECK_SIZE)
+    len_mask = rarfile.RAR5_PW_CHECK_SIZE - 1
+    for i, v in enumerate(password_hash):
+        pwd_check[i & len_mask] ^= v
+
+    return pwd_check == hdr_check
 
 
 # Replace rar3_s2k with native implementation which is faster for longer passwords
-rarfile.rar3_s2k = sabctools.rarfile_rar3_s2k
+rarfile.rar3_s2k = lru_cache(maxsize=128)(sabctools.rarfile_rar3_s2k)
+rarfile.rar5_s2k = lru_cache(maxsize=128)(rarfile.rar5_s2k)

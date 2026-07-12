@@ -26,6 +26,7 @@ import pytest
 
 import sabnzbd
 import sabnzbd.api as api
+import sabnzbd.odin_api as odin_api
 import sabnzbd.urlgrabber
 from sabnzbd.constants import AddNzbFileResult
 from sabnzbd.downloader import Server
@@ -72,10 +73,10 @@ def nzbqueue_env(monkeypatch, mocker, tmp_path):
 
 class TestOdinApiHelpers:
     def test_odin_info_from_kwargs_empty(self):
-        assert api._odin_info_from_kwargs({}) == {}
+        assert odin_api.odin_info_from_kwargs({}) == {}
 
     def test_odin_info_from_kwargs_both_ids(self):
-        info = api._odin_info_from_kwargs(
+        info = odin_api.odin_info_from_kwargs(
             {
                 "odin_download_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
                 "odin_target_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
@@ -87,8 +88,27 @@ class TestOdinApiHelpers:
         }
 
     def test_odin_info_from_kwargs_list_value(self):
-        info = api._odin_info_from_kwargs({"odin_download_id": ["download-id"]})
+        info = odin_api.odin_info_from_kwargs({"odin_download_id": ["download-id"]})
         assert info == {"odin_download_id": "download-id"}
+
+    def test_odin_info_from_kwargs_query_params_style(self):
+        """Compatible with Starlette QueryParams (upstream #3373)."""
+
+        class FakeQueryParams:
+            def get(self, key, default=None):
+                return {"odin_download_id": "dl-1", "odin_target_id": "tg-1"}.get(key, default)
+
+            def getlist(self, key):
+                data = {
+                    "odin_download_id": ["dl-1"],
+                    "odin_target_id": ["tg-1"],
+                }
+                return data.get(key, [])
+
+        assert odin_api.odin_info_from_kwargs(FakeQueryParams()) == {
+            "odin_download_id": "dl-1",
+            "odin_target_id": "tg-1",
+        }
 
     def test_odin_slot_fields(self):
         nzo = NzbObject("test")
@@ -96,7 +116,7 @@ class TestOdinApiHelpers:
             "odin_download_id": "dl-1",
             "odin_target_id": "tg-1",
         }
-        assert api._odin_slot_fields(nzo) == {
+        assert odin_api.odin_slot_fields(nzo) == {
             "odin_download_id": "dl-1",
             "odin_target_id": "tg-1",
         }

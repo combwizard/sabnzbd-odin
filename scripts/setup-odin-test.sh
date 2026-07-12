@@ -43,8 +43,8 @@ cfg = configobj.ConfigObj(infile=source, default_encoding="utf-8", encoding="utf
 misc = cfg.setdefault("misc", {})
 misc["port"] = port
 misc["auto_browser"] = "0"
-misc["download_dir"] = "/pool/downloads/sabnzbd/incomplete"
-misc["complete_dir"] = "/pool/downloads/sabnzbd/completed"
+misc["download_dir"] = "/mnt/extra1/downloads/sabnzbd/incomplete"
+misc["complete_dir"] = "/mnt/extra1/downloads/sabnzbd/completed"
 misc["script_dir"] = str(config_root / "scripts")
 misc["admin_dir"] = str(config_root / "admin")
 misc["log_dir"] = str(config_root / "logs")
@@ -122,7 +122,7 @@ PY
 )"
   if [[ -d "${ROOT}/../odin" ]]; then
     echo "==> Odin connectivity test (optional)"
-    (cd "${ROOT}/../odin" && SAB_API_KEY="${SAB_API_KEY}" go test ./internal/download/ -run TestSABnzbdForkConnectivity -count=1) || true
+    (cd "${ROOT}/../odin" && SAB_API_KEY="${SAB_API_KEY}" go test ./internal/download/ -run TestSABnzbdConnectivity -count=1) || true
   fi
 else
   echo "Skipping Odin DB setup (missing ${ODIN_SQL})" >&2
@@ -132,4 +132,4 @@ echo
 echo "Done."
 echo "  SAB fork UI: http://${BIND}/sabnzbd"
 echo "  Run metadata test again: ${ROOT}/scripts/test-odin-integration.sh"
-echo "  Odin: Settings → Download clients → Test on 'SABnzbd Fork'"
+  echo "  Odin: Settings → Download clients → Test on 'SabNZBd'"

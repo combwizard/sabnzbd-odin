@@ -20,7 +20,7 @@ PAYLOAD="$(cat <<EOF
   "odin_download_id": "${DL_ID}",
   "odin_target_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
   "status": "Completed",
-  "storage": "/pool/downloads/sabnzbd/completed/odin/test.mkv",
+  "storage": "/mnt/extra1/downloads/sabnzbd/completed/odin/test.mkv",
   "fail_message": ""
 }
 EOF

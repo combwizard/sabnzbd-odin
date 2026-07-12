@@ -1,0 +1,56 @@
+# Production Odin fork. Runtime root: /opt/_dockers/sabnzbd-odin
+#
+# Rebuild + start:  docker compose up -d --build
+# Stop:             docker compose down
+# Logs:             docker compose logs -f sabnzbd-odin
+#
+# host network keeps :8383 and odin webhooks to 127.0.0.1:8688 working
+# without changing sabnzbd.ini paths.
+
+services:
+  sabnzbd-odin:
+    container_name: sabnzbd-odin
+    build:
+      context: /home/smith/development/sabnzbd-odin
+      dockerfile: docker/Dockerfile
+      args:
+        PUID: 1000
+        PGID: 1000
+    image: sabnzbd-odin:local
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Oslo
+      - UMASK=002
+    volumes:
+      - ./config:/opt/_dockers/sabnzbd-odin/config
+      - /mnt/extra1/downloads/sabnzbd:/mnt/extra1/downloads/sabnzbd
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://127.0.0.1:8383/sabnzbd/api?mode=version'', timeout=5)"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "3"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.rule=Host(`sab.ostman.no`)
+      - traefik.http.routers.sabnzbd.entrypoints=websecure
+      - traefik.http.routers.sabnzbd.tls=true
+      - traefik.http.routers.sabnzbd.tls.certresolver=cloudflare
+      - traefik.http.routers.sabnzbd.middlewares=forward-auth@file
+      - traefik.http.services.sabnzbd.loadbalancer.server.port=8383
+      - traefik.http.services.sabnzbd.loadbalancer.passhostheader=true
+      - com.centurylinklabs.watchtower.enable=true
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,11 @@
+.git
+.github
+.venv
+.dev
+.cursor
+tests/cache
+**/__pycache__
+*.pyc
+*.pyo
+*.log
+*.pid

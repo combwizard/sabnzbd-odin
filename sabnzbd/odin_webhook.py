@@ -74,7 +74,7 @@ def _post_webhook(url: str, payload: dict[str, Any]) -> None:
         req.add_header(_ODIN_API_KEY_HEADER, api_key)
 
     try:
-        with urllib.request.urlopen(req, timeout=15) as response:
+        with urllib.request.urlopen(req, timeout=45) as response:
             logging.info(
                 "Odin webhook delivered for nzo_id=%s event=%s status=%s",
                 payload.get("nzo_id"),

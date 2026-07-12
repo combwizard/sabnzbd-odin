@@ -9,6 +9,9 @@ This fork adds features so Odin can use SABnzbd as a headless download worker wi
 | Metadata passthrough at grab time | Done |
 | Per-slot `kbpersec` in queue API | Done |
 | Completion webhooks to Odin | Done |
+| Plugin hook registry (Odin as first plugin) | Upcoming |
+
+See `BACKLOG.md` for scope and motivation.
 
 ---
 
@@ -36,7 +39,7 @@ GET /sabnzbd/api?mode=addurl&apikey=…&name=…&cat=odin
 ### Storage
 
 - Typed keys on `NzoInfo` in `sabnzbd/nzb/object.py` (`odin_download_id`, `odin_target_id`)
-- Written at add time via `_odin_info_from_kwargs()` in `sabnzbd/api.py`
+- Written at add time via `odin_info_from_kwargs()` in `sabnzbd/odin_api.py`
 - Survives queue save/restore in `nzo_info`
 - Persisted in history SQLite `meta` column after completion
 
@@ -62,7 +65,7 @@ Stock SAB exposes **total** download speed on the queue header only (`queue.kbpe
 
 1. **`BPSMeter.update_nzo(nzo_id, bytes)`** — called from `newswrapper.py` when a full article is received for that job
 2. **`BPSMeter.nzo_bps`** — exponential moving average per `nzo_id`, updated on each `BPSMeter.update()` tick (same model as `server_bps`)
-3. **`build_queue()`** — sets `slot["kbpersec"]` via `_slot_kbpersec()` when slot status is `Downloading`; otherwise `"0.00"`
+3. **`build_queue()`** — sets `slot["kbpersec"]` via `slot_kbpersec()` when slot status is `Downloading`; otherwise `"0.00"`
 
 Queue-level `kbpersec` is unchanged (sum across all active downloads).
 
@@ -129,7 +132,8 @@ Odin exposes `POST /api/v1/webhook/sabnzbd` (REST API key required). It resolves
 | File | Change |
 |------|--------|
 | `sabnzbd/nzb/object.py` | `NzoInfo` keys for Odin IDs |
-| `sabnzbd/api.py` | Add handlers, queue/history slot fields, per-slot `kbpersec` |
+| `sabnzbd/odin_api.py` | API helpers (metadata + per-slot speed) |
+| `sabnzbd/api.py` | Call sites in add handlers, queue/history builders |
 | `sabnzbd/bpsmeter.py` | Per-job BPS tracking |
 | `sabnzbd/newswrapper.py` | `update_nzo()` on completed article |
 | `sabnzbd/cfg.py` | `[odin]` options |
@@ -158,7 +162,9 @@ Optional scripts under `scripts/` for running and validating the fork alongside 
 | `scripts/test-odin-webhook-failure-e2e.sh` | SAB failure → webhook `failed` → no IMPORT |
 | `scripts/test-odin-import-restart-heal.sh` | Orphan `running` IMPORT jobs requeued |
 | `scripts/test-odin-integration-all.sh` | Run full validation suite |
-| `scripts/cutover-prod.sh` | Prod cutover from Docker SAB to host fork |
+| `scripts/track-upstream-uvicorn.sh` | Report divergence vs upstream PR #3373 |
+| `scripts/docker-prod.sh` | Build/start/stop prod Docker container |
+| `scripts/cutover-prod.sh` | One-time migration from stock Docker SAB |
 | `scripts/start-sab-prod-daemon.sh` | Start production daemon |
 
 ### Environment overrides

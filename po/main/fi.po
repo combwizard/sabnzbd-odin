@@ -259,6 +259,14 @@ msgstr "Varmennus epäonnistui, tarkista käyttäjänimi/salasana."
 msgid "Too many connections, please pause downloading or try again later"
 msgstr "Liikaa yhteyksiä, keskeytä lataaminen tai yritä myöhemmin uudelleen"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "Selvitetään osoitetta"
@@ -1448,7 +1456,8 @@ msgstr "LEVITETÄÄN %s min"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "Ladattiin ajassa %s keskilatausnopeudella %sB/s"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "Ikä"
@@ -1766,6 +1775,10 @@ msgstr ""
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "%s poistaminen epäonnistui"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4578,6 +4591,10 @@ msgstr "Monioperaatiot"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "Paina vaihto-näppäintä pohjassa valitaksesi alueen"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

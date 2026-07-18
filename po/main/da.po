@@ -272,6 +272,14 @@ msgid "Too many connections, please pause downloading or try again later"
 msgstr ""
 "Alt for mange forbindelser, pause en download eller forsøg igen senere"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "Server løsning"
@@ -1502,7 +1510,8 @@ msgstr "PROPAGATING %s min"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "Hentede i %s med et gennemsnit på %sB/s"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "Alder"
@@ -1822,6 +1831,10 @@ msgstr "Ingen matchende tidligere rar-fil for %s"
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "Fjernelse af %s mislykkedes"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4697,6 +4710,10 @@ msgstr "Multi-operationer"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "Hold Skiftetasten nede for at vælge et område"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

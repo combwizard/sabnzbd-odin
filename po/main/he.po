@@ -263,6 +263,14 @@ msgstr "אימות נכשל, בדוק שם משתמש/סיסמה."
 msgid "Too many connections, please pause downloading or try again later"
 msgstr "יותר מדי חיבורים, אנא השהה הורדה או נסה שוב מאוחר יותר"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "פותר כתובת"
@@ -1470,7 +1478,8 @@ msgstr "מפיץ %s דקות"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "ירד תוך %s בממוצע של %s ב/ש"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "גיל"
@@ -1790,6 +1799,10 @@ msgstr "אין קובץ rar קודם תואם עבור %s"
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "הסרת %s נכשלה"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4615,6 +4628,10 @@ msgstr "רב־תפעולים"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "החזק את מקש Shift כדי לבחור טווח"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

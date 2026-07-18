@@ -81,6 +81,7 @@ from sabnzbd.misc import (
     match_str,
     bool_conv,
     get_platform_description,
+    helpful_warning,
     is_loopback_addr,
     is_lan_addr,
 )
@@ -881,11 +882,7 @@ def _api_rss_now(name: str, kwargs: ApiParams) -> bytes:
 
 def _api_retry_all(name: str, kwargs: ApiParams) -> bytes:
     """API: Retry all failed items in History"""
-    items = sabnzbd.api.build_history()[0]
-    nzo_ids = []
-    for item in items:
-        if item["retry"]:
-            nzo_ids.append(retry_job(item["nzo_id"]))
+    nzo_ids = [retry_job(job["nzo_id"]) for job in sabnzbd.get_db_connection().get_retryable_jobs()]
     return report(keyword="status", data=nzo_ids)
 
 
@@ -1537,6 +1534,20 @@ def test_nntp_server_dict(kwargs: ApiParams) -> tuple[bool, str]:
     if not return_status:
         return_status = (False, T("Could not determine connection result (%s)") % nntp_message)
 
+    # On high-latency connections a higher pipelining setting can significantly improve speed
+    if return_status[0] and nw.nntp:
+        response_time_ms = round(nw.nntp.addrinfo.connection_time * 1000)
+        if response_time_ms > 50 and pipelining_requests < 5:
+            helpful_warning(
+                T(
+                    "Server %s took %d ms to respond. On high-latency connections, increasing 'Articles per request' "
+                    "to a value between 5 and 10 can improve download speed. "
+                    "See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+                ),
+                host,
+                response_time_ms,
+            )
+
     # Close the connection and return result
     nw.hard_reset()
     return return_status
@@ -1949,8 +1960,8 @@ def build_header(webdir: str = "", for_template: bool = True, trans_functions: b
 
 
 def build_history(
-    start: int = 0,
-    limit: int = 1000000,
+    start: int,
+    limit: int,
     archive: bool = False,
     search: Optional[str] = None,
     categories: Optional[list[str]] = None,

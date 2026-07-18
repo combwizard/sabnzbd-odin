@@ -254,6 +254,14 @@ msgstr "身份认证失败，请检查用户名/密码。"
 msgid "Too many connections, please pause downloading or try again later"
 msgstr "连接数过多，请先暂停下载或稍后再试"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "正在解析地址"
@@ -1439,7 +1447,8 @@ msgstr "传播延迟生效，等待 %s 分钟"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "已下载，耗时 %s，平均速度 %sB/s"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "发布时间"
@@ -1757,6 +1766,10 @@ msgstr "%s 没有匹配的早期 rar 文件"
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "移除 %s 失败"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4507,6 +4520,10 @@ msgstr "多选操作"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "按 shift 键可选择范围"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

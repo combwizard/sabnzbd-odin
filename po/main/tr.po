@@ -280,6 +280,14 @@ msgstr ""
 "Çok fazla bağlantı, lütfen indirmeyi duraklatın veya daha sonra tekrar "
 "deneyin"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "Adres çözümleniyor"
@@ -1513,7 +1521,8 @@ msgstr "YAYINLANIYOR %s dakika"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "%s içinde ortalama %sB/s hızında indirildi"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "Yaş"
@@ -1835,6 +1844,10 @@ msgstr "%s için eşleşen önceki bir rar dosyası yok"
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "%s kaldırması başarısız oldu"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4714,11 +4727,11 @@ msgstr "Dosya ismi"
 
 #: sabnzbd/skintext.py
 msgid "Toggle SABnzbd navigation menu"
-msgstr ""
+msgstr "SABnzbd gezinti menüsünü aç veya kapat"
 
 #: sabnzbd/skintext.py
 msgid "Open SABnzbd main menu"
-msgstr ""
+msgstr "SABnzbd ana menüsünü aç"
 
 #: sabnzbd/skintext.py
 msgid "Free Space"
@@ -4735,6 +4748,10 @@ msgstr "Çoklu-İşlemler"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "Bir aralık seçmek için Shift tuşunu basılı tutun"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

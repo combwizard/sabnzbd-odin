@@ -266,6 +266,14 @@ msgstr ""
 "Prea multe conexiuni, vă rugăm să întrerupeţi descărcarea sau să încercaţi "
 "din nou mai târziu"
 
+#. Warning message
+#: sabnzbd/api.py
+msgid ""
+"Server %s took %d ms to respond. On high-latency connections, increasing "
+"'Articles per request' to a value between 5 and 10 can improve download "
+"speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
+msgstr ""
+
 #: sabnzbd/api.py
 msgid "Resolving address"
 msgstr "Reolvare adresă"
@@ -1478,7 +1486,8 @@ msgstr "SE PROPAGHEAZĂ %s min"
 msgid "Downloaded in %s at an average of %sB/s"
 msgstr "Descărcat în %s cu o medie de %sB/s"
 
-#. Job details page, file age column header
+#. Config->RSS filter-type selection menu (e.g. ">3d", "<12h") - Job details
+#. page, file age column header
 #: sabnzbd/nzb/object.py, sabnzbd/skintext.py
 msgid "Age"
 msgstr "Vârsta"
@@ -1802,6 +1811,10 @@ msgstr ""
 #: sabnzbd/postproc.py
 msgid "Removing %s failed"
 msgstr "Ştergerea %s nereuşită"
+
+#: sabnzbd/postproc.py
+msgid "Removed %s files with unwanted extensions"
+msgstr ""
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -4595,6 +4608,10 @@ msgstr "Operaţii-Multiple"
 #: sabnzbd/skintext.py
 msgid "Hold shift key to select a range"
 msgstr "Ține-ți tasta shift pentru a selecta un interval"
+
+#: sabnzbd/skintext.py
+msgid "Select job"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Check all"

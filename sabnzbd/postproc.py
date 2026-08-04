@@ -610,9 +610,7 @@ def process_job(nzo: NzbObject) -> bool:
                 nzo.status = Status.RUNNING
                 nzo.set_action_line(T("Running script"), nzo.script)
                 nzo.set_unpack_info("Script", T("Running user script %s") % nzo.script, unique=True)
-                script_log, script_ret = external_processing(
-                    script_path, nzo, clip_path(workdir_complete), job_result, newfiles
-                )
+                script_log, script_ret = external_processing(script_path, nzo, workdir_complete, job_result, newfiles)
 
                 # Format output depending on return status
                 script_line = get_last_line(script_log)
@@ -829,6 +827,12 @@ def parring(nzo: NzbObject) -> tuple[bool, bool]:
     if verified and all(verified.values()):
         logging.info("Skipping verification and repair, all sets previously verified: %s", verified)
         return par_error, re_add
+
+    # Combine the per-article crc32s into a whole-file crc32 for the quick-check and SFV-check below
+    # Done here rather than while assembling because crc32_combine is order-dependent and articles can
+    # be written to disk out of order
+    for nzf in nzo.finished_files:
+        nzf.finalize_crc32()
 
     if nzo.extrapars:
         # Need to make a copy because it can change during iteration

@@ -41,6 +41,7 @@ from sabnzbd.filesystem import (
     get_filename,
     has_unwanted_extension,
     get_basename,
+    same_device,
 )
 from sabnzbd.constants import (
     Status,
@@ -125,14 +126,30 @@ class Assembler(Thread):
         with self.ready_bytes_lock:
             return sum(self.ready_bytes.values())
 
-    def update_ready_bytes(self, nzf: NzbFile, delta: int) -> int:
+    def file_ready_bytes(self, nzf: NzbFile) -> int:
+        """Decoded bytes of this file that still have to be written to disk"""
         with self.ready_bytes_lock:
-            cur = self.ready_bytes.get(nzf.nzf_id, 0) + delta
-            if cur <= 0:
-                self.ready_bytes.pop(nzf.nzf_id, None)
+            return self.ready_bytes.get(nzf.nzf_id, 0)
+
+    def add_ready_bytes(self, article: Article) -> None:
+        """Start tracking the decoded bytes of an article that still have to be written to disk.
+        Called when the data enters the article cache, so it is always counted before the cache
+        can write it to disk, keeping it symmetrical with remove_ready_bytes"""
+        if not article.decoded_size:
+            return
+        nzf_id = article.nzf.nzf_id
+        with self.ready_bytes_lock:
+            self.ready_bytes[nzf_id] = self.ready_bytes.get(nzf_id, 0) + article.decoded_size
+
+    def remove_ready_bytes(self, article: Article) -> None:
+        """Stop tracking an article, its data is now on disk"""
+        nzf_id = article.nzf.nzf_id
+        with self.ready_bytes_lock:
+            # Could already be gone, for example when the file was finished or the job was removed
+            if (cur := self.ready_bytes.get(nzf_id, 0) - article.decoded_size) > 0:
+                self.ready_bytes[nzf_id] = cur
             else:
-                self.ready_bytes[nzf.nzf_id] = cur
-            return cur
+                self.ready_bytes.pop(nzf_id, None)
 
     def clear_ready_bytes(self, *nzfs: NzbFile) -> None:
         with self.ready_bytes_lock:
@@ -153,11 +170,8 @@ class Assembler(Thread):
             self.queue.put(AssemblerTask(nzo))
             return
 
-        # Track bytes pending being written for this nzf
-        if self.should_track_ready_bytes(article, allow_non_contiguous):
-            ready_bytes = self.update_ready_bytes(nzf, article.decoded_size)
-        else:
-            ready_bytes = 0
+        # Bytes pending being written for this nzf
+        ready_bytes = self.file_ready_bytes(nzf)
 
         article_has_first_part = bool(article and article.lowest_partnum)
         if article_has_first_part:
@@ -227,11 +241,6 @@ class Assembler(Thread):
         if next_ready and ready_bytes >= self.assembler_trigger:
             return True
         return False
-
-    @staticmethod
-    def should_track_ready_bytes(article: Optional[Article], allow_non_contiguous: bool) -> bool:
-        """"""
-        return article and not allow_non_contiguous and article.decoded_size
 
     def delay(self) -> float:
         """Calculate how long if at all the downloader thread should sleep to allow the assembler to catch up"""
@@ -335,14 +344,19 @@ class Assembler(Thread):
         if not full_dir:
             complete_free = cfg.complete_free.get_float()
             required_space = 0
-            if cfg.direct_unpack():
+            if cfg.direct_unpack() and nzo.unpack:
                 # We unpack while we download, so we should check every time
                 # if the unpack maybe already filled up the drive
                 required_space = complete_free / GIGI
             elif nzo.bytes_tried > (nzo.bytes - nzo.bytes_par2) * 0.90:
                 # Since only at 100% unpack is started, continue
-                # downloading until 95% complete before checking
-                required_space = (complete_free + nzo.bytes) / GIGI
+                # downloading until 90% complete before checking
+                required_space = complete_free / GIGI
+                if nzo.unpack or not same_device(download_dir.path, complete_dir.path):
+                    # Unpacking writes a second copy of the data before the archives are removed
+                    # and moving to another device copies it, so both need room for the whole job.
+                    # Without unpacking on the same device the move is only a rename.
+                    required_space += nzo.bytes / GIGI
 
             if required_space and complete_dir.free < required_space:
                 full_dir = complete_dir.path
@@ -510,9 +524,8 @@ class Assembler(Thread):
             while written < len(data):
                 written += Assembler._write(fd, nzf, mv[written:], pos + written)
 
-        nzf.update_crc32(article.crc32, len(data))
         article.on_disk = True
-        sabnzbd.Assembler.update_ready_bytes(nzf, -len(data))
+        sabnzbd.Assembler.remove_ready_bytes(article)
         with nzf.lock:
             # assembler_next_index is the lowest index that has not yet been written sequentially from the start of the file.
             # If this was the next required index to remain sequential, it can be incremented which allows the assembler to
@@ -545,8 +558,6 @@ class Assembler(Thread):
         :returns (file_descriptor, current_offset, can_direct_write)
         """
         with nzf.file_lock:
-            # Get the current umask without changing it, to create a file with the same permissions as `with open(...)`
-            os.umask(os.umask(0))
             fd = os.open(nzf.filepath, os.O_CREAT | os.O_WRONLY | getattr(os, "O_BINARY", 0), 0o666)
             offset = nzf.contiguous_offset()
             os.lseek(fd, offset, os.SEEK_SET)

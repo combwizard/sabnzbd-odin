@@ -294,6 +294,10 @@ msgid ""
 "'Articles per request' to a value between 5 and 10 can improve download "
 "speed. See: https://sabnzbd.org/wiki/advanced/nntp-pipelining"
 msgstr ""
+"Le serveur %s a mis %d ms à répondre. Sur les connexions à forte latence, "
+"augmenter le paramètre « Articles par requête » à une valeur comprise entre "
+"5 et 10 peut améliorer la vitesse de téléchargement. Voir : "
+"https://sabnzbd.org/wiki/advanced/nntp-pipelining"
 
 #: sabnzbd/api.py
 msgid "Resolving address"
@@ -1879,7 +1883,7 @@ msgstr "Échec de la suppression de %s"
 
 #: sabnzbd/postproc.py
 msgid "Removed %s files with unwanted extensions"
-msgstr ""
+msgstr "Suppression de %s fichiers comportant des extensions indésirables"
 
 #. Error message
 #: sabnzbd/powersup.py
@@ -3643,10 +3647,12 @@ msgstr ""
 "ajoutée."
 
 #: sabnzbd/skintext.py
-msgid "The queue will resort every 30 seconds if % downloaded is selected."
+msgid ""
+"The queue will resort every 30 seconds if % downloaded or Remaining Size is "
+"selected."
 msgstr ""
-"La file d'attente sera triée toutes les 30 secondes si le % de "
-"téléchargement est sélectionné."
+"La file d'attente sera retriée toutes les 30 secondes si % téléchargé ou "
+"Taille restante est sélectionné."
 
 #: sabnzbd/skintext.py
 msgid "Propagation delay"
@@ -4807,6 +4813,10 @@ msgid "Temp Folder"
 msgstr "Dossier temporaire"
 
 #: sabnzbd/skintext.py
+msgid "Clear search"
+msgstr "Effacer la recherche"
+
+#: sabnzbd/skintext.py
 msgid "Multi-Operations"
 msgstr "Multi-Operations"
 
@@ -4816,7 +4826,7 @@ msgstr "Maintenez la touche Maj pour sélectionner une plage"
 
 #: sabnzbd/skintext.py
 msgid "Select job"
-msgstr ""
+msgstr "Sélectionner la tâche"
 
 #: sabnzbd/skintext.py
 msgid "Check all"
@@ -5065,6 +5075,10 @@ msgstr ""
 #: sabnzbd/skintext.py
 msgid "Sort by % downloaded <small>Most&rarr;Least</small>"
 msgstr "Trier par % téléchargé <small>Most&rarr;Least</small>"
+
+#: sabnzbd/skintext.py
+msgid "Sort by Remaining Size <small>Smallest&rarr;Largest</small>"
+msgstr "Trier par Taille restante <small>Plus petit&rarr;Plus grand</small>"
 
 #: sabnzbd/skintext.py
 msgid "Sort by Age <small>Oldest&rarr;Newest</small>"

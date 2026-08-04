@@ -66,12 +66,6 @@ nav .btn:active {
     border: none;
 }
 
-/* Feedback slider needs explicit dark bg (not a card, not an input) */
-#feedback-slider {
-    background-color: var(--clr-input-bg);
-    color: var(--clr-text);
-}
-
 /* Elements that must be white regardless of --clr-text */
 .main-restarting,
 .main-filedrop {

@@ -8,7 +8,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: mauron, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/sabnzbd/teams/111101/tr/)\n"
@@ -123,7 +123,6 @@ msgstr "SABnzbd %s başlatıldı"
 msgid "SABnzbd shutdown finished"
 msgstr "SABnzbd kapatılması tamamlandı"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "%s sinyali yakalandı, kaydediliyor ve çıkılıyor..."
@@ -2286,6 +2285,10 @@ msgstr "Makine"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "İptal"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4833,6 +4836,14 @@ msgstr "Ek kuyruk sütunları"
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr "Ek tarihçe sütunları"
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "page"

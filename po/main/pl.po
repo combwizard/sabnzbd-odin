@@ -6,7 +6,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: Safihre <safihre@sabnzbd.org>, 2026\n"
 "Language-Team: Polish (https://app.transifex.com/sabnzbd/teams/111101/pl/)\n"
@@ -114,7 +114,6 @@ msgstr "Uruchomiono SABnzbd %s"
 msgid "SABnzbd shutdown finished"
 msgstr "SABnzbd został wyłączony"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "Odebrano sygnał %s, zapisywanie i zamykanie programu..."
@@ -2220,6 +2219,10 @@ msgstr "Host"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "Anuluj"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4656,6 +4659,14 @@ msgstr ""
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr "Postęp"
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "Działania"
 
 #: sabnzbd/skintext.py
 msgid "page"

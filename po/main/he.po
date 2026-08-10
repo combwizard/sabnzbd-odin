@@ -7,7 +7,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: Safihre <safihre@sabnzbd.org>, 2026\n"
 "Language-Team: Hebrew (https://app.transifex.com/sabnzbd/teams/111101/he/)\n"
@@ -115,7 +115,6 @@ msgstr "SABnzbd %s התחיל"
 msgid "SABnzbd shutdown finished"
 msgstr "כיבוי SABnzbd הסתיים"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "אות %s נתפס, שומר ויוצא…"
@@ -2237,6 +2236,10 @@ msgstr "מארח"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "ביטול"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4706,6 +4709,14 @@ msgstr "יותר עמודות תור"
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr "יותר עמודות היסטוריה"
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr "התקדמות"
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "פעולות"
 
 #: sabnzbd/skintext.py
 msgid "page"

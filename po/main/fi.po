@@ -6,7 +6,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: Safihre <safihre@sabnzbd.org>, 2026\n"
 "Language-Team: Finnish (https://app.transifex.com/sabnzbd/teams/111101/fi/)\n"
@@ -119,7 +119,6 @@ msgstr "SABnzbd %s käynnistetty"
 msgid "SABnzbd shutdown finished"
 msgstr "SABnzbd sammutus valmis"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "Signaali %s kaapattu, tallennetaan ja lopetetaan..."
@@ -2213,6 +2212,10 @@ msgstr "Isäntä"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "Peruuta"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4670,6 +4673,14 @@ msgstr ""
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr "Edistyminen"
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "Toiminnot"
 
 #: sabnzbd/skintext.py
 msgid "page"

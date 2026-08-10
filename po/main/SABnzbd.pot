@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: team@sabnzbd.org\n"
 "Language-Team: SABnzbd <team@sabnzbd.org>\n"
@@ -105,7 +105,6 @@ msgstr ""
 msgid "SABnzbd shutdown finished"
 msgstr ""
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr ""
@@ -2083,6 +2082,10 @@ msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Cancel"
+msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Close"
 msgstr ""
 
 #: sabnzbd/skintext.py
@@ -4323,6 +4326,14 @@ msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
+msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Actions"
 msgstr ""
 
 #: sabnzbd/skintext.py

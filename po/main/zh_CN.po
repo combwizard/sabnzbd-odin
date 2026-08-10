@@ -8,7 +8,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: Safihre <safihre@sabnzbd.org>, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/sabnzbd/teams/111101/zh_CN/)\n"
@@ -116,7 +116,6 @@ msgstr "SABnzbd %s 已启动"
 msgid "SABnzbd shutdown finished"
 msgstr "SABnzbd 关闭完成"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "捕捉到 %s 信号，正在保存并退出..."
@@ -2204,6 +2203,10 @@ msgstr "主机"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "取消"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4598,6 +4601,14 @@ msgstr "额外的队列列"
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr "额外的历史记录列"
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr "进度"
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "操作"
 
 #: sabnzbd/skintext.py
 msgid "page"

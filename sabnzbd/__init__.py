@@ -205,7 +205,7 @@ def sig_handler(signum=None, frame=None):
         # Ignore the "logoff" event when running as a Win32 daemon
         return True
     if signum is not None:
-        logging.warning(T("Signal %s caught, saving and exiting..."), signum)
+        logging.info(T("Signal %s caught, saving and exiting..."), signum)
         sabnzbd.shutdown_program()
 
 
@@ -266,6 +266,7 @@ def initialize(pause_downloader=False, clean_up=False, repair=0):
     cfg.https_port.callback(cfg.guard_restart)
     cfg.https_cert.callback(cfg.guard_restart)
     cfg.https_key.callback(cfg.guard_restart)
+    cfg.https_chain.callback(cfg.guard_restart)
     cfg.enable_https.callback(cfg.guard_restart)
     cfg.socks5_proxy_url.callback(cfg.guard_restart)
     cfg.top_only.callback(cfg.guard_top_only)

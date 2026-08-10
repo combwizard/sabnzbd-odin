@@ -3,14 +3,14 @@
 # 
 # Translators:
 # Safihre <safihre@sabnzbd.org>, 2023
-# Pavel C <quoing_transifex@mess.cz>, 2026
 # Iamanro, 2026
+# Pavel C <quoing_transifex@mess.cz>, 2026
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
-"Last-Translator: Iamanro, 2026\n"
+"Last-Translator: Pavel C <quoing_transifex@mess.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/sabnzbd/teams/111101/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -122,7 +122,6 @@ msgstr "SABnzbd %s spustěno"
 msgid "SABnzbd shutdown finished"
 msgstr "Ukončení činnosti programu SABnzbd bylo dokončeno"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "Zaznamenán signál %s, ukládání a ukončení..."
@@ -2284,6 +2283,10 @@ msgstr "Hostitel"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "Zrušit"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4797,6 +4800,14 @@ msgstr "Další sloupce fronty"
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr "Další sloupce historie"
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "Akce"
 
 #: sabnzbd/skintext.py
 msgid "page"

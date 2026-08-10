@@ -6,7 +6,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: SABnzbd-5.1.0\n"
+"Project-Id-Version: SABnzbd-5.2.0\n"
 "PO-Revision-Date: 2020-06-27 15:49+0000\n"
 "Last-Translator: Safihre <safihre@sabnzbd.org>, 2026\n"
 "Language-Team: Serbian (https://app.transifex.com/sabnzbd/teams/111101/sr/)\n"
@@ -116,7 +116,6 @@ msgstr "SABnzbd %s покренут"
 msgid "SABnzbd shutdown finished"
 msgstr "Гашење SABnzbd је завршено"
 
-#. Warning message
 #: sabnzbd/__init__.py
 msgid "Signal %s caught, saving and exiting..."
 msgstr "Signal %s primljen, snimanje i napuštanje..."
@@ -2206,6 +2205,10 @@ msgstr "Хост"
 #: sabnzbd/skintext.py
 msgid "Cancel"
 msgstr "Откажи"
+
+#: sabnzbd/skintext.py
+msgid "Close"
+msgstr ""
 
 #: sabnzbd/skintext.py
 msgid "Log in"
@@ -4629,6 +4632,14 @@ msgstr ""
 #: sabnzbd/skintext.py
 msgid "Extra history columns"
 msgstr ""
+
+#: sabnzbd/skintext.py
+msgid "Progress"
+msgstr "Напредак"
+
+#: sabnzbd/skintext.py
+msgid "Actions"
+msgstr "Акције"
 
 #: sabnzbd/skintext.py
 msgid "page"
